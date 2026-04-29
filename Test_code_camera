@@ -1,0 +1,31 @@
+import cv2
+
+def find_usb_camera():
+    for i in range(10):
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            backend = cap.getBackendName()
+            cap.release()
+            return i
+    return None
+
+camera_index = find_usb_camera()
+if camera_index is None:
+    print("USB-камера не найдена")
+    exit()
+
+print(f"Используется камера с индексом: {camera_index}")
+cap = cv2.VideoCapture(camera_index)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    cv2.imshow('USB Camera', frame)
+    
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
