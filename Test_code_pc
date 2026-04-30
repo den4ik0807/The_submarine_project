@@ -1,0 +1,58 @@
+import serial
+import keyboard
+import time
+import sys
+
+PORT = 'COM3'
+BAUDRATE = 9600
+
+try:
+    ser = serial.Serial(PORT, BAUDRATE, timeout=1)
+    time.sleep(2)
+except serial.SerialException:
+    sys.exit(1)
+
+keys_pressed = set()
+
+try:
+    while True:
+        # Проверка нажатых клавиш
+        if keyboard.is_pressed('w') or keyboard.is_pressed('W'):
+            if 'w' not in keys_pressed:
+                ser.write(b'W')
+                keys_pressed.add('w')
+        elif keyboard.is_pressed('s') or keyboard.is_pressed('S'):
+            if 's' not in keys_pressed:
+                ser.write(b'S')
+                keys_pressed.add('s')
+        elif keyboard.is_pressed('a') or keyboard.is_pressed('A'):
+            if 'a' not in keys_pressed:
+                ser.write(b'A')
+                keys_pressed.add('a')
+        elif keyboard.is_pressed('d') or keyboard.is_pressed('D'):
+            if 'd' not in keys_pressed:
+                ser.write(b'D')
+                keys_pressed.add('d')
+        elif keyboard.is_pressed('shift'):
+            if 'shift' not in keys_pressed:
+                ser.write(b'U')
+                keys_pressed.add('shift')
+        elif keyboard.is_pressed('ctrl'):
+            if 'ctrl' not in keys_pressed:
+                ser.write(b'C')
+                keys_pressed.add('ctrl')
+        else:
+            if keys_pressed:
+                ser.write(b' ')
+                keys_pressed.clear()
+        
+        if keyboard.is_pressed('esc'):
+            ser.write(b' ')
+            break
+        time.sleep(0.05)
+
+except KeyboardInterrupt:
+    pass
+finally:
+    ser.write(b' ')
+    ser.close()
