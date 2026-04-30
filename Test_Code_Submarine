@@ -1,0 +1,140 @@
+const int ENA_LEFT = 5;     // PWM левого мотора
+const int IN1_LEFT = 7;
+const int IN2_LEFT = 8;
+const int ENB_RIGHT = 6;    // PWM правого мотора
+const int IN3_RIGHT = 9;
+const int IN4_RIGHT = 10;
+const int EN_LIFT = 11;     // PWM мотора подъёма
+const int IN1_LIFT = 12;
+const int IN2_LIFT = 13;
+
+const int SPEED_NORMAL = 200;
+const int SPEED_TURN = 180;
+
+void moveForward() {
+  analogWrite(ENA_LEFT, SPEED_NORMAL);
+  digitalWrite(IN1_LEFT, HIGH);
+  digitalWrite(IN2_LEFT, LOW);
+  
+  analogWrite(ENB_RIGHT, SPEED_NORMAL);
+  digitalWrite(IN3_RIGHT, HIGH);
+  digitalWrite(IN4_RIGHT, LOW);
+}
+
+void moveBackward() {
+  analogWrite(ENA_LEFT, SPEED_NORMAL);
+  digitalWrite(IN1_LEFT, LOW);
+  digitalWrite(IN2_LEFT, HIGH);
+  
+  analogWrite(ENB_RIGHT, SPEED_NORMAL);
+  digitalWrite(IN3_RIGHT, LOW);
+  digitalWrite(IN4_RIGHT, HIGH);
+}
+
+void turnLeft() {
+  analogWrite(ENA_LEFT, SPEED_TURN);
+  digitalWrite(IN1_LEFT, LOW);
+  digitalWrite(IN2_LEFT, HIGH);
+  
+  analogWrite(ENB_RIGHT, SPEED_TURN);
+  digitalWrite(IN3_RIGHT, HIGH);
+  digitalWrite(IN4_RIGHT, LOW);
+}
+
+void turnRight() {
+  analogWrite(ENA_LEFT, SPEED_TURN);
+  digitalWrite(IN1_LEFT, HIGH);
+  digitalWrite(IN2_LEFT, LOW);
+  
+  analogWrite(ENB_RIGHT, SPEED_TURN);
+  digitalWrite(IN3_RIGHT, LOW);
+  digitalWrite(IN4_RIGHT, HIGH);
+}
+
+void liftUp() {
+  analogWrite(EN_LIFT, SPEED_NORMAL);
+  digitalWrite(IN1_LIFT, HIGH);
+  digitalWrite(IN2_LIFT, LOW);
+}
+
+void liftDown() {
+  analogWrite(EN_LIFT, SPEED_NORMAL);
+  digitalWrite(IN1_LIFT, LOW);
+  digitalWrite(IN2_LIFT, HIGH);
+}
+
+void stopMotors() {
+  digitalWrite(IN1_LEFT, LOW);
+  digitalWrite(IN2_LEFT, LOW);
+  digitalWrite(IN3_RIGHT, LOW);
+  digitalWrite(IN4_RIGHT, LOW);
+}
+
+void stopLift() {
+  digitalWrite(IN1_LIFT, LOW);
+  digitalWrite(IN2_LIFT, LOW);
+}
+
+void stopAllMotors() {
+  stopMotors();
+  stopLift();
+}
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ENA_LEFT, OUTPUT);
+  pinMode(IN1_LEFT, OUTPUT);
+  pinMode(IN2_LEFT, OUTPUT);
+  pinMode(ENB_RIGHT, OUTPUT);
+  pinMode(IN3_RIGHT, OUTPUT);
+  pinMode(IN4_RIGHT, OUTPUT);
+  pinMode(EN_LIFT, OUTPUT);
+  pinMode(IN1_LIFT, OUTPUT);
+  pinMode(IN2_LIFT, OUTPUT);
+  stopAllMotors();
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read();
+    
+    switch(command) {
+      case 'w':
+      case 'W':
+        moveForward();
+        break;
+        
+      case 's':
+      case 'S':
+        moveBackward();
+        break;
+        
+      case 'a':
+      case 'A':
+        turnLeft();
+        break;
+        
+      case 'd':
+      case 'D':
+        turnRight();
+        break;
+        
+      case 'u':
+      case 'U':
+        liftUp();
+        break;
+        
+      case 'c':
+      case 'C':
+        liftDown();
+        break;
+        
+      case ' ':
+        stopAllMotors();
+        break;
+        
+      default:
+        break;
+    }
+  }
+}
